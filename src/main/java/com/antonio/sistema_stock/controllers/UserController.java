@@ -1,12 +1,11 @@
 package com.antonio.sistema_stock.controllers;
 
-import com.antonio.sistema_stock.models.dto.UserDto;
+import com.antonio.sistema_stock.models.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.models.dtoResponse.UserDtoResponse;
 import com.antonio.sistema_stock.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -31,9 +30,9 @@ public class UserController {
 
 
     @PostMapping("")
-    public ResponseEntity<?> insert(@RequestBody UserDto userDto){
+    public ResponseEntity<?> insert(@RequestBody UserDtoRequest userDtoRequest){
         try {
-            return ResponseEntity.ok().body(userService.insert(userDto));
+            return ResponseEntity.ok().body(userService.insert(userDtoRequest));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
