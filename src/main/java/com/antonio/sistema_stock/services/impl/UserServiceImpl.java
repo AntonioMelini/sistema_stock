@@ -1,10 +1,12 @@
 package com.antonio.sistema_stock.services.impl;
 
 import com.antonio.sistema_stock.entities.User;
-import com.antonio.sistema_stock.models.dto.UserDto;
+import com.antonio.sistema_stock.models.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.models.dtoResponse.UserDtoResponse;
 import com.antonio.sistema_stock.repositories.IUserRepository;
 import com.antonio.sistema_stock.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,7 @@ public class UserServiceImpl implements IUserService {
     ////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public List<UserDto> getAll() {
+    public List<UserDtoResponse> getAll() {
         return mapUserToUserDtos( (List<User>) userRepository.findAll());
 
     }
@@ -28,9 +30,9 @@ public class UserServiceImpl implements IUserService {
     //////////////////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDto getByCuit(String cuit) {
+    public UserDtoResponse getByCuit(String cuit) {
         try {
-            return mapUserToUserDto(userRepository.findByCuit(cuit).orElseThrow());
+            return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow());
 
         }catch (Exception e){
             System.out.println("se pudrio");
@@ -40,9 +42,9 @@ public class UserServiceImpl implements IUserService {
     /////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDto getByBusinessName(String name) {
+    public UserDtoResponse getByBusinessName(String name) {
         try{
-            return mapUserToUserDto(userRepository.findByBusinessName(name).orElseThrow());
+            return mapUserToUserDtoResponse(userRepository.findByBusinessName(name).orElseThrow());
         }catch (Exception e){
             System.out.println("se pudrio");
             return null;
@@ -68,14 +70,14 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional()
     @Override
-    public UserDto insert(UserDto userDto) throws Exception {
-        Boolean userCuit=userRepository.findByCuit(userDto.getCuit()).isEmpty();
-        Boolean userBusinessN=userRepository.findByBusinessName(userDto.getBusiness_name()).isEmpty();
-        Boolean userEmail=userRepository.findByEmail(userDto.getEmail()).isEmpty();
-        Boolean userUsername=userRepository.findByUsername(userDto.getUsername()).isEmpty();
+    public UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception {
+        Boolean userCuit=userRepository.findByCuit(userDtoRequest.getCuit()).isEmpty();
+        Boolean userBusinessN=userRepository.findByBusinessName(userDtoRequest.getBusiness_name()).isEmpty();
+        Boolean userEmail=userRepository.findByEmail(userDtoRequest.getEmail()).isEmpty();
+        Boolean userUsername=userRepository.findByUsername(userDtoRequest.getUsername()).isEmpty();
         if (userCuit && userBusinessN && userEmail && userUsername) {
-            User user = mapUserDtoToUserInsert(userDto);
-            return mapUserToUserDto(userRepository.save(user));
+            User user = mapUserDtoRequestToUserInsert(userDtoRequest);
+            return mapUserToUserDtoResponse(userRepository.save(user));
         }else if(!userCuit && !userBusinessN && !userEmail && !userUsername) throw new Exception("No se puede crear, ya hay un registro de este usuario");
         else if(!userUsername)throw new Exception("No se puede crear, ya hay un usuario con ese username registrado");
         else if (!userBusinessN)throw new Exception("No se puede crear, ya hay un registro con este business_name");
@@ -88,46 +90,43 @@ public class UserServiceImpl implements IUserService {
 
     ///////////////////////////////////////////////////////
 
-    private UserDto mapUserToUserDto(User u){
-       UserDto userDto=new UserDto();
-            userDto.setCuit(u.getCuit());
-            userDto.setEmail(u.getEmail());
-            userDto.setBusiness_direction(u.getBusiness_direction());
-            userDto.setBusiness_name(u.getBusiness_name());
-            userDto.setUsername(u.getUsername());
-            userDto.setPassword(u.getPassword());
-            userDto.setGross_income(u.getGross_income());
-            userDto.setAdmin(u.getAdmin());
-            userDto.setActive(u.getActive());
-        return userDto;
+    private UserDtoResponse mapUserToUserDtoResponse(User u){
+       UserDtoResponse userDtoRequest =new UserDtoResponse();
+            userDtoRequest.setCuit(u.getCuit());
+            userDtoRequest.setEmail(u.getEmail());
+            userDtoRequest.setBusiness_direction(u.getBusiness_direction());
+            userDtoRequest.setBusiness_name(u.getBusiness_name());
+            userDtoRequest.setUsername(u.getUsername());
+            userDtoRequest.setGross_income(u.getGross_income());
+
+        return userDtoRequest;
 
     }
-    private List<UserDto> mapUserToUserDtos(List<User> users){
-        List<UserDto> usersDto=new ArrayList<>();
+    private List<UserDtoResponse> mapUserToUserDtos(List<User> users){
+        List<UserDtoResponse> usersDto=new ArrayList<>();
         for (User u:users) {
-            UserDto userDto= new UserDto();
-            userDto.setCuit(u.getCuit());
-            userDto.setEmail(u.getEmail());
-            userDto.setBusiness_direction(u.getBusiness_direction());
-            userDto.setBusiness_name(u.getBusiness_name());
-            userDto.setUsername(u.getUsername());
-            userDto.setPassword(u.getPassword());
-            userDto.setGross_income(u.getGross_income());
-            userDto.setAdmin(u.getAdmin());
-            userDto.setActive(u.getActive());
-            usersDto.add(userDto);
+            UserDtoResponse userDtoResponse= new UserDtoResponse();
+            userDtoResponse.setCuit(u.getCuit());
+            userDtoResponse.setEmail(u.getEmail());
+            userDtoResponse.setBusiness_direction(u.getBusiness_direction());
+            userDtoResponse.setBusiness_name(u.getBusiness_name());
+            userDtoResponse.setUsername(u.getUsername());
+            userDtoResponse.setGross_income(u.getGross_income());
+            usersDto.add(userDtoResponse);
         }
         return usersDto;
 
     }
-    private User mapUserDtoToUserInsert(UserDto u){
+    private User mapUserDtoRequestToUserInsert(UserDtoRequest u){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
+        String result = encoder.encode(u.getPassword());
         User user= new User();
         user.setCuit(u.getCuit());
         user.setEmail(u.getEmail());
         user.setBusiness_direction(u.getBusiness_direction());
         user.setBusiness_name(u.getBusiness_name());
         user.setUsername(u.getUsername());
-        user.setPassword(u.getPassword());
+        user.setPassword(result);
         user.setGross_income(u.getGross_income());
 
         if(u.getAdmin() == null || u.getAdmin() == false){
