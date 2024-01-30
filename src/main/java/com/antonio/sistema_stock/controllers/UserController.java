@@ -25,7 +25,11 @@ public class UserController {
     }
     @GetMapping("/cuit/{cuit}")
     public ResponseEntity<?> getByCuit(@PathVariable String cuit){
-        return ResponseEntity.ok().body(userService.getByCuit(cuit));
+        try {
+            return ResponseEntity.ok().body(userService.getByCuit(cuit));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
     @GetMapping("/businessName/{name}")
     public ResponseEntity<?> getByBusinessName(@PathVariable String name){

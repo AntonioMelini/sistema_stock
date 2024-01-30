@@ -9,7 +9,7 @@ public interface IUserService {
     List<UserDtoResponse> getAll();
     List<UserDtoResponse> getAllInactive();
     UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception;
-    UserDtoResponse getByCuit(String cuit);
+    UserDtoResponse getByCuit(String cuit) throws Exception;
     UserDtoResponse getByBusinessName(String name);
     String deleteByCuit(String cuit);
 

@@ -36,14 +36,11 @@ public class UserServiceImpl implements IUserService {
     //////////////////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDtoResponse getByCuit(String cuit) {
-        try {
-            return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow());
+    public UserDtoResponse getByCuit(String cuit) throws Exception{
 
-        }catch (Exception e){
-            System.out.println("se pudrio");
-            return null;
-        }
+            return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
+
+
     }
     /////////////////////////////
     @Transactional(readOnly = true)
