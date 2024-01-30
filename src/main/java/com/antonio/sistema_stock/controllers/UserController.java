@@ -18,6 +18,11 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAll());
 
     }
+    @GetMapping("/inactive")
+    public ResponseEntity<?> getAllInactive(){
+        return ResponseEntity.ok().body(userService.getAllInactive());
+
+    }
     @GetMapping("/cuit/{cuit}")
     public ResponseEntity<?> getByCuit(@PathVariable String cuit){
         return ResponseEntity.ok().body(userService.getByCuit(cuit));
