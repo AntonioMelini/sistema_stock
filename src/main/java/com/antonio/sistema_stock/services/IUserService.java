@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IUserService {
     List<UserDtoResponse> getAll();
+    List<UserDtoResponse> getAllInactive();
     UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception;
     UserDtoResponse getByCuit(String cuit);
     UserDtoResponse getByBusinessName(String name);

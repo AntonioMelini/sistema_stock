@@ -23,7 +23,13 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public List<UserDtoResponse> getAll() {
-        return mapUserToUserDtos( (List<User>) userRepository.findAll());
+        return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"active");
+
+    }
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserDtoResponse> getAllInactive() {
+        return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"inactive");
 
     }
 
@@ -102,7 +108,7 @@ public class UserServiceImpl implements IUserService {
         return userDtoRequest;
 
     }
-    private List<UserDtoResponse> mapUserToUserDtos(List<User> users){
+    private List<UserDtoResponse> mapUserToUserDtosResponse(List<User> users,String option){
         List<UserDtoResponse> usersDto=new ArrayList<>();
         for (User u:users) {
             UserDtoResponse userDtoResponse= new UserDtoResponse();
@@ -112,7 +118,12 @@ public class UserServiceImpl implements IUserService {
             userDtoResponse.setBusiness_name(u.getBusiness_name());
             userDtoResponse.setUsername(u.getUsername());
             userDtoResponse.setGross_income(u.getGross_income());
-            usersDto.add(userDtoResponse);
+            if (option == "active" && u.getActive()) {
+                usersDto.add(userDtoResponse);
+            }
+            if (option == "inactive" && !u.getActive()){
+                usersDto.add(userDtoResponse);
+            }
         }
         return usersDto;
 
