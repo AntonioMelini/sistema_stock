@@ -19,14 +19,27 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAll());
 
     }
-    @GetMapping("/saludar")
-    public String saludo(){
-        return "hola que tal";
+    @GetMapping("/cuit/{cuit}")
+    public ResponseEntity<?> getByCuit(@PathVariable String cuit){
+        return ResponseEntity.ok().body(userService.getByCuit(cuit));
     }
+    @GetMapping("/businessName/{name}")
+    public ResponseEntity<?> getByBusinessName(@PathVariable String name){
+        return ResponseEntity.ok().body(userService.getByBusinessName(name));
+    }
+
 
 
     @PostMapping("")
     public ResponseEntity<?> insert(@RequestBody UserDto userDto){
-        return ResponseEntity.ok().body(userService.insert(userDto));
+        try {
+            return ResponseEntity.ok().body(userService.insert(userDto));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{cuit}")
+    public  ResponseEntity<?> deleteByCuit(@PathVariable String cuit){
+        return ResponseEntity.ok().body(userService.deleteByCuit(cuit));
     }
 }
