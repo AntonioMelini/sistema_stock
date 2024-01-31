@@ -1,8 +1,8 @@
 package com.antonio.sistema_stock.services.impl;
 
 import com.antonio.sistema_stock.entities.User;
-import com.antonio.sistema_stock.models.dtoRequest.UserDtoRequest;
-import com.antonio.sistema_stock.models.dtoResponse.UserDtoResponse;
+import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse;
 import com.antonio.sistema_stock.repositories.IUserRepository;
 import com.antonio.sistema_stock.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,23 +23,27 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     @Override
     public List<UserDtoResponse> getAll() {
-        return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"active");
+        //return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"active");
+
+        //userRepository.findAllByOrderByUsernameAsc().stream().forEach(u-> System.out.println(u.getUsername()));
+        return userRepository.findAllUsers();
+
 
     }
     @Transactional(readOnly = true)
     @Override
     public List<UserDtoResponse> getAllInactive() {
-        return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"inactive");
-
+        //return mapUserToUserDtosResponse( (List<User>) userRepository.findAll(),"inactive");
+        return userRepository.findAllUsersInactive();
     }
 
     //////////////////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDtoResponse getByCuit(String cuit) throws Exception{
+    public UserDtoResponse getByCuit(String cuit) {
 
-            return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
-
+           // return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
+            return userRepository.findByCuit(cuit);
 
     }
     /////////////////////////////
@@ -54,11 +58,12 @@ public class UserServiceImpl implements IUserService {
         }
     }
     /////////////////////////////////////////
+
     @Transactional()
     @Override
     public String deleteByCuit(String cuit) {
 
-        Optional<User> userOptional=userRepository.findByCuit(cuit);
+        Optional<User> userOptional=userRepository.findUserByCuit(cuit);
         if (userOptional.isPresent()){
             User user= userOptional.orElseThrow();
             user.setActive(false);
@@ -68,13 +73,15 @@ public class UserServiceImpl implements IUserService {
         return "NO SE MODIFICO UN HUIEVO";
     }
 
+
+
     ///////////////////////////////////////////////////////////////////////////
 
 
     @Transactional()
     @Override
     public UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception {
-        Boolean userCuit=userRepository.findByCuit(userDtoRequest.getCuit()).isEmpty();
+        Boolean userCuit=userRepository.findUserByCuit(userDtoRequest.getCuit()).isEmpty();
         Boolean userBusinessN=userRepository.findByBusinessName(userDtoRequest.getBusiness_name()).isEmpty();
         Boolean userEmail=userRepository.findByEmail(userDtoRequest.getEmail()).isEmpty();
         Boolean userUsername=userRepository.findByUsername(userDtoRequest.getUsername()).isEmpty();
@@ -91,6 +98,8 @@ public class UserServiceImpl implements IUserService {
 
     }
 
+
+
     ///////////////////////////////////////////////////////
 
     private UserDtoResponse mapUserToUserDtoResponse(User u){
@@ -105,26 +114,7 @@ public class UserServiceImpl implements IUserService {
         return userDtoRequest;
 
     }
-    private List<UserDtoResponse> mapUserToUserDtosResponse(List<User> users,String option){
-        List<UserDtoResponse> usersDto=new ArrayList<>();
-        for (User u:users) {
-            UserDtoResponse userDtoResponse= new UserDtoResponse();
-            userDtoResponse.setCuit(u.getCuit());
-            userDtoResponse.setEmail(u.getEmail());
-            userDtoResponse.setBusiness_direction(u.getBusiness_direction());
-            userDtoResponse.setBusiness_name(u.getBusiness_name());
-            userDtoResponse.setUsername(u.getUsername());
-            userDtoResponse.setGross_income(u.getGross_income());
-            if (option == "active" && u.getActive()) {
-                usersDto.add(userDtoResponse);
-            }
-            if (option == "inactive" && !u.getActive()){
-                usersDto.add(userDtoResponse);
-            }
-        }
-        return usersDto;
 
-    }
     private User mapUserDtoRequestToUserInsert(UserDtoRequest u){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
         String result = encoder.encode(u.getPassword());
