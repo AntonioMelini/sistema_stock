@@ -1,15 +1,16 @@
 package com.antonio.sistema_stock.services;
 
-import com.antonio.sistema_stock.entities.User;
-import com.antonio.sistema_stock.models.dto.UserDto;
+import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse;
 
 import java.util.List;
 
 public interface IUserService {
-    List<UserDto> getAll();
-    UserDto insert(UserDto userDto) throws Exception;
-    UserDto getByCuit(String cuit);
-    UserDto getByBusinessName(String name);
+    List<UserDtoResponse> getAll();
+    List<UserDtoResponse> getAllInactive();
+    UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception;
+    UserDtoResponse getByCuit(String cuit) ;
+    UserDtoResponse getByBusinessName(String name);
     String deleteByCuit(String cuit);
 
 

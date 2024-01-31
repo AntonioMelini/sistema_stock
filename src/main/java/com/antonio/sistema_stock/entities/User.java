@@ -1,28 +1,50 @@
 package com.antonio.sistema_stock.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
+    @Size(min = 11,max = 11,message = "Insert a correct CUIT")
+    @NotBlank
     private String cuit;
     @Column(name = "email",nullable = false,unique = true)
+    @Email(message = "Insert a valid email")
+    @NotBlank
     private String email;
     @Column(name = "username",nullable = false,unique = true)
+    @NotBlank
     private String username;
     @Column(name = "password",nullable = false)
+    @NotBlank
     private String password;
     @Column(name = "business_direction",nullable = false)
+    @NotBlank
     private  String business_direction;
     @Column(name = "business_name",nullable = false)
+    @NotBlank
     private String business_name;
     @Column(name = "gross_income",nullable = false)
+    @Size(min = 14,max = 14,message = "Insert a correct gross_income")
+    @NotBlank
     private  String gross_income;
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
     @Column(columnDefinition = "boolean default true")
     private Boolean active;
+
+    @Embedded
+    private Audit audit=new Audit();
+
+
+
+
 
     public Boolean getActive() {
         return active;
@@ -96,6 +118,13 @@ public class User {
     public void setBusiness_name(String business_name) {
         this.business_name = business_name;
     }
+    public String getGross_income() {
+        return gross_income;
+    }
+
+    public void setGross_income(String gross_income) {
+        this.gross_income = gross_income;
+    }
 
     @Override
     public String toString() {
@@ -112,11 +141,5 @@ public class User {
                 '}';
     }
 
-    public String getGross_income() {
-        return gross_income;
-    }
 
-    public void setGross_income(String gross_income) {
-        this.gross_income = gross_income;
-    }
 }

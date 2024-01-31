@@ -1,9 +1,6 @@
-package com.antonio.sistema_stock.models.dto;
+package com.antonio.sistema_stock.dto.dtoRequest;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-
-public class UserDto {
+public class UserDtoRequest {
 
     private String cuit;
     private String email;
@@ -46,10 +43,10 @@ public class UserDto {
         System.out.println("esto es el setAdmin despues "+this.admin);
     }
 
-    public UserDto() {
+    public UserDtoRequest() {
     }
 
-    public UserDto(String cuit, String email, String username, String password, String business_direction, String business_name, String gross_income) {
+    public UserDtoRequest(String cuit, String email, String username, String password, String business_direction, String business_name, String gross_income) {
         this.cuit = cuit;
         this.email = email;
         this.username = username;
