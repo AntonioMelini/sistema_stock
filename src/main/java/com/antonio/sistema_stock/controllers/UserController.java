@@ -1,12 +1,17 @@
 package com.antonio.sistema_stock.controllers;
 
 import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.services.IUserService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -26,11 +31,9 @@ public class UserController {
     }
     @GetMapping("/cuit/{cuit}")
     public ResponseEntity<?> getByCuit(@PathVariable String cuit){
-        try {
+
             return ResponseEntity.status(HttpStatus.OK).body(userService.getByCuit(cuit));
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+
     }
     @GetMapping("/businessName/{name}")
     public ResponseEntity<?> getByBusinessName(@PathVariable String name){
@@ -40,12 +43,8 @@ public class UserController {
 
 
     @PostMapping("")
-    public ResponseEntity<?> insert(@Valid @RequestBody UserDtoRequest userDtoRequest){
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.insert(userDtoRequest));
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public ResponseEntity<?> insert(@RequestBody @Valid UserDtoRequest userDtoRequest){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.insert(userDtoRequest));
     }
 
 
