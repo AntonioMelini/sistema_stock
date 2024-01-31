@@ -1,4 +1,4 @@
-package com.antonio.sistema_stock.models.dtoResponse;
+package com.antonio.sistema_stock.dto.dtoResponse;
 
 public class UserDtoResponse {
     private String cuit;
@@ -8,6 +8,17 @@ public class UserDtoResponse {
     private String business_name;
     private  String gross_income;
 
+    public UserDtoResponse() {
+    }
+
+    public UserDtoResponse(String cuit, String email, String username, String business_direction, String business_name, String gross_income) {
+        this.cuit = cuit;
+        this.email = email;
+        this.username = username;
+        this.business_direction = business_direction;
+        this.business_name = business_name;
+        this.gross_income = gross_income;
+    }
 
     public String getCuit() {
         return cuit;

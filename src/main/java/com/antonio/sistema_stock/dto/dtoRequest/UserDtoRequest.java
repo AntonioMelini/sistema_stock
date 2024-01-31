@@ -1,4 +1,4 @@
-package com.antonio.sistema_stock.models.dtoRequest;
+package com.antonio.sistema_stock.dto.dtoRequest;
 
 public class UserDtoRequest {
 
