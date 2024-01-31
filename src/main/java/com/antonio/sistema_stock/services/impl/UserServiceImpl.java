@@ -3,13 +3,17 @@ package com.antonio.sistema_stock.services.impl;
 import com.antonio.sistema_stock.entities.User;
 import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
 import com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse;
+import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
+import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import com.antonio.sistema_stock.repositories.IUserRepository;
 import com.antonio.sistema_stock.services.IUserService;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +44,7 @@ public class UserServiceImpl implements IUserService {
     //////////////////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDtoResponse getByCuit(String cuit) {
+    public UserDtoResponse getByCuit(String cuit){
 
            // return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
             return userRepository.findByCuit(cuit);
@@ -70,7 +74,7 @@ public class UserServiceImpl implements IUserService {
             userRepository.save(user);
             return "SE MODIFICO CORRECTAMENTE";
         }
-        return "NO SE MODIFICO UN HUIEVO";
+        throw new UserNotFound("User not Found");
     }
 
 
@@ -80,23 +84,28 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional()
     @Override
-    public UserDtoResponse insert(UserDtoRequest userDtoRequest) throws Exception {
+    public UserDtoResponse insert(UserDtoRequest userDtoRequest)  {
         Boolean userCuit=userRepository.findUserByCuit(userDtoRequest.getCuit()).isEmpty();
         Boolean userBusinessN=userRepository.findByBusinessName(userDtoRequest.getBusiness_name()).isEmpty();
         Boolean userEmail=userRepository.findByEmail(userDtoRequest.getEmail()).isEmpty();
         Boolean userUsername=userRepository.findByUsername(userDtoRequest.getUsername()).isEmpty();
+        Boolean userGroosIncome = userRepository.findUserByGrossIncome(userDtoRequest.getGross_income()).isEmpty();
         if (userCuit && userBusinessN && userEmail && userUsername) {
             User user = mapUserDtoRequestToUserInsert(userDtoRequest);
             return mapUserToUserDtoResponse(userRepository.save(user));
-        }else if(!userCuit && !userBusinessN && !userEmail && !userUsername) throw new Exception("No se puede crear, ya hay un registro de este usuario");
-        else if(!userUsername)throw new Exception("No se puede crear, ya hay un usuario con ese username registrado");
-        else if (!userBusinessN)throw new Exception("No se puede crear, ya hay un registro con este business_name");
-        else if (!userCuit)throw new Exception("No se puede crear, ya hay un registro con este CUIT");
-            else throw new Exception("No se puede crear, ya hay un usuario con ese email registrado");
-
-
+        }else if(!userCuit && !userBusinessN && !userEmail && !userUsername && !userGroosIncome) throw new UserCreateValidation("No se puede crear, ya hay un registro de este usuario");
+        else if(!userUsername)throw new UserCreateValidation("No se puede crear, ya hay un usuario con ese username registrado");
+        else if (!userBusinessN)throw new UserCreateValidation("No se puede crear, ya hay un registro con este business_name");
+        else if (!userGroosIncome)throw new UserCreateValidation("No se puede crear, ya hay un registro con este userGroosIncome");
+        else if (!userCuit)throw new UserCreateValidation("No se puede crear, ya hay un registro con este CUIT");
+        else throw new UserCreateValidation("No se puede crear, ya hay un usuario con ese email registrado");
 
     }
+
+
+
+
+
 
 
 
@@ -116,6 +125,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     private User mapUserDtoRequestToUserInsert(UserDtoRequest u){
+        if(u.getPassword().isBlank()) throw new UserCreateValidation("Inserte una contraseña valida");
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
         String result = encoder.encode(u.getPassword());
         User user= new User();

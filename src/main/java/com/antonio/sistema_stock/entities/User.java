@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -12,27 +13,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class User {
     @Id
     @Size(min = 11,max = 11,message = "Insert a correct CUIT")
-    @NotBlank
+    @NotBlank(message = "Insert a correct CUIT")
     private String cuit;
+
     @Column(name = "email",nullable = false,unique = true)
     @Email(message = "Insert a valid email")
-    @NotBlank
+    @NotBlank(message = "Insert a valid email")
     private String email;
+
     @Column(name = "username",nullable = false,unique = true)
-    @NotBlank
+    @NotBlank(message = "Insert a correct username")
     private String username;
+
     @Column(name = "password",nullable = false)
-    @NotBlank
+    @NotBlank(message = "Insert a correct password")
+    @Size(min = 5,message = "invalid password, must be more than 5 charactersmfor be a valid passowrd")
     private String password;
+
     @Column(name = "business_direction",nullable = false)
-    @NotBlank
+    @NotBlank(message = "Insert a correct business_direction")
     private  String business_direction;
     @Column(name = "business_name",nullable = false)
-    @NotBlank
+    @NotBlank(message = "Insert a correct business_name")
     private String business_name;
     @Column(name = "gross_income",nullable = false)
     @Size(min = 14,max = 14,message = "Insert a correct gross_income")
-    @NotBlank
+    @NotBlank(message = "Insert a correct gross_income")
     private  String gross_income;
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
