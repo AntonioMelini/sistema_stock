@@ -6,6 +6,7 @@ import jakarta.persistence.PreUpdate;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Embeddable
 public class Audit {
@@ -14,11 +15,11 @@ public class Audit {
 
     @PrePersist
     public void prePersist(){
-        this.created_at= LocalDateTime.now();
+        this.created_at= LocalDateTime.now(ZoneId.of("GMT-3")).withNano(0);
     }
     @PreUpdate
     public  void preUpdate(){
-        this.updated_at= LocalDateTime.now();
+        this.updated_at= LocalDateTime.now(ZoneId.of("GMT-3")).withNano(0);
     }
 
     public LocalDateTime getCreated_at() {

@@ -10,8 +10,12 @@ import java.util.List;
 public interface IUserService {
     List<UserDtoResponse> getAll();
     List<UserDtoResponse> getAllInactive();
-    UserDtoResponse insert(UserDtoRequest userDtoRequest) ;
+
+
+      UserDtoResponse registerAdmin(UserDtoRequest userDtoRequest) throws Exception;
+      UserDtoResponse insert(UserDtoRequest userDtoRequest) ;
     UserDtoResponse getByCuit(String cuit)  ;
+
     UserDtoResponse getByBusinessName(String name);
     String deleteByCuit(String cuit);
 
