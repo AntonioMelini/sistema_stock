@@ -1,5 +1,6 @@
 package com.antonio.sistema_stock.services.impl;
 
+
 import com.antonio.sistema_stock.entities.User;
 import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
 import com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse;
@@ -7,14 +8,12 @@ import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import com.antonio.sistema_stock.repositories.IUserRepository;
 import com.antonio.sistema_stock.services.IUserService;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +33,7 @@ public class UserServiceImpl implements IUserService {
 
 
     }
+
     @Transactional(readOnly = true)
     @Override
     public List<UserDtoResponse> getAllInactive() {
@@ -44,19 +44,21 @@ public class UserServiceImpl implements IUserService {
     //////////////////////////////////////////
     @Transactional(readOnly = true)
     @Override
-    public UserDtoResponse getByCuit(String cuit){
+    public UserDtoResponse getByCuit(String cuit) {
 
-           // return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
-            return userRepository.findByCuit(cuit);
+        // return mapUserToUserDtoResponse(userRepository.findByCuit(cuit).orElseThrow(()-> new Exception("No se encontro")));
+        return userRepository.findByCuit(cuit);
 
     }
+
     /////////////////////////////
     @Transactional(readOnly = true)
     @Override
     public UserDtoResponse getByBusinessName(String name) {
-        try{
-            return mapUserToUserDtoResponse(userRepository.findByBusinessName(name).orElseThrow());
-        }catch (Exception e){
+        try {
+            // return mapUserToUserDtoResponse(userRepository.findByBusinessName(name).orElseThrow());
+            return null;
+        } catch (Exception e) {
             System.out.println("se pudrio");
             return null;
         }
@@ -67,9 +69,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public String deleteByCuit(String cuit) {
 
-        Optional<User> userOptional=userRepository.findUserByCuit(cuit);
-        if (userOptional.isPresent()){
-            User user= userOptional.orElseThrow();
+        Optional<User> userOptional = userRepository.findUserByCuit(cuit);
+        if (userOptional.isPresent()) {
+            User user = userOptional.orElseThrow();
             user.setActive(false);
             userRepository.save(user);
             return "SE MODIFICO CORRECTAMENTE";
@@ -91,7 +93,7 @@ public class UserServiceImpl implements IUserService {
         Boolean userUsername=userRepository.findByUsername(userDtoRequest.getUsername()).isEmpty();
         Boolean userGroosIncome = userRepository.findUserByGrossIncome(userDtoRequest.getGross_income()).isEmpty();
         if (userCuit && userBusinessN && userEmail && userUsername) {
-            User user = mapUserDtoRequestToUserInsert(userDtoRequest);
+            User user = mapUserDtoRequestToUserInsert(userDtoRequest,"ROLE_USER");
             return mapUserToUserDtoResponse(userRepository.save(user));
         }else if(!userCuit && !userBusinessN && !userEmail && !userUsername && !userGroosIncome) throw new UserCreateValidation("No se puede crear, ya hay un registro de este usuario");
         else if(!userUsername)throw new UserCreateValidation("No se puede crear, ya hay un usuario con ese username registrado");
@@ -104,7 +106,25 @@ public class UserServiceImpl implements IUserService {
 
 
 
+    @Transactional()
+    @Override
+    public UserDtoResponse registerAdmin(UserDtoRequest userDtoRequest) throws Exception {
+        Boolean userCuit=userRepository.findUserByCuit(userDtoRequest.getCuit()).isEmpty();
+        Boolean userBusinessN=userRepository.findByBusinessName(userDtoRequest.getBusiness_name()).isEmpty();
+        Boolean userEmail=userRepository.findByEmail(userDtoRequest.getEmail()).isEmpty();
+        Boolean userUsername=userRepository.findByUsername(userDtoRequest.getUsername()).isEmpty();
+        if (userCuit && userBusinessN && userEmail && userUsername) {
+            User user = mapUserDtoRequestToUserInsert(userDtoRequest,"ROLE_ADMIN");
+            return mapUserToUserDtoResponse(userRepository.save(user));
+        }else if(!userCuit && !userBusinessN && !userEmail && !userUsername) throw new Exception("No se puede crear, ya hay un registro de este usuario");
+        else if(!userUsername)throw new Exception("No se puede crear, ya hay un usuario con ese username registrado");
+        else if (!userBusinessN)throw new Exception("No se puede crear, ya hay un registro con este business_name");
+        else if (!userCuit)throw new Exception("No se puede crear, ya hay un registro con este CUIT");
+        else throw new Exception("No se puede crear, ya hay un usuario con ese email registrado");
 
+
+
+    }
 
 
 
@@ -124,7 +144,7 @@ public class UserServiceImpl implements IUserService {
 
     }
 
-    private User mapUserDtoRequestToUserInsert(UserDtoRequest u){
+    private User mapUserDtoRequestToUserInsert(UserDtoRequest u,String role){
         if(u.getPassword().isBlank()) throw new UserCreateValidation("Inserte una contraseña valida");
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
         String result = encoder.encode(u.getPassword());
@@ -136,21 +156,13 @@ public class UserServiceImpl implements IUserService {
         user.setUsername(u.getUsername());
         user.setPassword(result);
         user.setGross_income(u.getGross_income());
-
-        if(u.getAdmin() == null || u.getAdmin() == false){
-            user.setAdmin(false);
-        }else{
-            user.setAdmin(true);
-        }
-
-        if(u.getActive() == null || u.getActive() == true){
-            user.setActive(true);
-        }else{
-            user.setActive(false);
-        }
+        user.setRole(role);
+        user.setActive(u.getActive() == null || u.getActive());
 
         return user;
 
     }
 
 }
+
+

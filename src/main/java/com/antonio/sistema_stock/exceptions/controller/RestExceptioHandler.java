@@ -1,11 +1,13 @@
 package com.antonio.sistema_stock.exceptions.controller;
 
 import com.antonio.sistema_stock.exceptions.api.ApiError;
+import com.antonio.sistema_stock.exceptions.role.RoleAlredyExistException;
 import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,7 +28,7 @@ public class RestExceptioHandler {
     @ExceptionHandler(value = {UserNotFound.class})
     public ResponseEntity<ApiError> handleUserNotFoundException (UserNotFound e){
         System.out.println("entro a usernotfound");
-        ApiError error = new ApiError(404,e.getMessage(), LocalDateTime.now());
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
@@ -34,7 +36,7 @@ public class RestExceptioHandler {
     @ExceptionHandler(value = {UserCreateValidation.class})
     public ResponseEntity<ApiError> handleUserCreateValidationException (UserCreateValidation e){
         System.out.println(e);
-        ApiError error = new ApiError(404,e.getMessage(), LocalDateTime.now());
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(value = {ConstraintViolationException.class})
@@ -50,6 +52,17 @@ public class RestExceptioHandler {
             errors.put(fieldName,message);
         });
         return errors;
+    }
+    @ExceptionHandler(value = {UsernameNotFoundException.class})
+    public ResponseEntity<ApiError> handleUsernameNotFoundException (UsernameNotFoundException e){
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {RoleAlredyExistException.class})
+    public ResponseEntity<ApiError> handleRoleAlredyExistException (RoleAlredyExistException e){
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 
