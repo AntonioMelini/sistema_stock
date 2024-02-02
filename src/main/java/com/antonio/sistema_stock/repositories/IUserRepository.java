@@ -14,7 +14,7 @@ public interface IUserRepository extends CrudRepository<User,String>  {
 
    //List<User> findAllByOrderByUsernameAsc();
 
-    @Query("select new com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse(u.cuit, u.email, u.username, u.business_direction, u.business_name, u.gross_income) from User u where u.active=true")
+    @Query("select new com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse(u.cuit, u.email, u.username, u.business_direction, u.business_name, u.gross_income) from User u where u.active=true and u.role='ROLE_USER'")
     List<UserDtoResponse> findAllUsers();
 
     @Query("select new com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse(u.cuit, u.email, u.username, u.business_direction, u.business_name, u.gross_income) from User u where u.active=false")
