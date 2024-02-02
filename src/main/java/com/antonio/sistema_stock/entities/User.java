@@ -36,7 +36,7 @@ public class User {
     @NotBlank(message = "Insert a correct business_name")
     private String business_name;
     @Column(name = "gross_income",nullable = false)
-    @Size(min = 14,max = 14,message = "Insert a correct gross_income")
+    @Size(min = 11,max = 11,message = "Insert a correct gross_income")
     @NotBlank(message = "Insert a correct gross_income")
     private  String gross_income;
     @Column(columnDefinition = "boolean default false")

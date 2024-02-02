@@ -21,39 +21,40 @@ public class UserController {
     @Autowired
     private  IUserService userService;
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
 
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/inactive")
     public ResponseEntity<?> getAllInactive(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllInactive());
 
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/cuit/{cuit}")
     public ResponseEntity<?> getByCuit(@PathVariable String cuit){
 
             return ResponseEntity.status(HttpStatus.OK).body(userService.getByCuit(cuit));
 
     }
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/businessName/{name}")
     public ResponseEntity<?> getByBusinessName(@PathVariable String name){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getByBusinessName(name));
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("")
     public ResponseEntity<?> insert(@RequestBody @Valid UserDtoRequest userDtoRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.insert(userDtoRequest));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+/*
     @PostMapping("/register")
     private ResponseEntity<?> registerAdmin(@Valid @RequestBody UserDtoRequest userDtoRequest){
         try {
@@ -63,8 +64,10 @@ public class UserController {
         }
     }
 
+ */
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{cuit}")
     public  ResponseEntity<?> deleteByCuit(@PathVariable String cuit){
         return ResponseEntity.status(HttpStatus.OK).body(userService.deleteByCuit(cuit));

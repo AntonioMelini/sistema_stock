@@ -1,23 +1,17 @@
-package com.antonio.sistema_stock.exceptions.controller;
+package com.antonio.sistema_stock.exceptions.handlers;
 
 import com.antonio.sistema_stock.exceptions.api.ApiError;
-import com.antonio.sistema_stock.exceptions.role.RoleAlredyExistException;
 import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,11 +53,7 @@ public class RestExceptioHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {RoleAlredyExistException.class})
-    public ResponseEntity<ApiError> handleRoleAlredyExistException (RoleAlredyExistException e){
-        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
+
 
 
 }
