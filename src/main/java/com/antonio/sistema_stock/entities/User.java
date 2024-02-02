@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,18 +43,18 @@ public class User {
     @Column(columnDefinition = "boolean default false")
     private Boolean active;
 
-   /* @ManyToOne(targetEntity = Role.class)
-    private Role roles;
-    */
     @Column(name = "role",nullable = false)
     @Size(min = 9,max = 10,message = "Insert a correct role")
     @NotBlank(message = "Insert a correct role")
     private String role;
+
+    @Embedded
+    private final Audit audit=new Audit();
+
     @Transient
     private Boolean admin;
 
-    @Embedded
-    private Audit audit=new Audit();
+
 
 
 
@@ -161,6 +162,10 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+
+
+
 
     @Override
     public String toString() {
