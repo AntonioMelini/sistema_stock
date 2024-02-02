@@ -1,6 +1,8 @@
 package com.antonio.sistema_stock.controllers;
 
+import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
 import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
+import com.antonio.sistema_stock.entities.Product;
 import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.services.IUserService;
 import jakarta.validation.ConstraintViolationException;
@@ -72,6 +74,11 @@ public class UserController {
     public  ResponseEntity<?> deleteByCuit(@PathVariable String cuit){
         return ResponseEntity.status(HttpStatus.OK).body(userService.deleteByCuit(cuit));
     }
+
+
+
+
+
 
 
 }
