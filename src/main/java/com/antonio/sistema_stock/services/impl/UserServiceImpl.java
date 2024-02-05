@@ -67,7 +67,7 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional()
     @Override
-    public String deleteByCuit(String cuit) {
+    public String disableByCuit(String cuit) {
 
         Optional<User> userOptional = userRepository.findUserByCuit(cuit);
         if (userOptional.isPresent()) {
@@ -78,7 +78,18 @@ public class UserServiceImpl implements IUserService {
         }
         throw new UserNotFound("User not Found");
     }
+    @Transactional()
+    @Override
+    public String deleteByCuit(String cuit) {
+        System.out.println("entro a delete service");
+        Optional<User> userOptional = userRepository.findUserByCuit(cuit);
+        if (userOptional.isPresent()) {
+            userRepository.deleteById(cuit);
+            return "Se elimino correctamente";
+        }
+        throw new UserNotFound("no se encontro el usuario");
 
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////

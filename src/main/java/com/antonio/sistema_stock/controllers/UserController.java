@@ -24,33 +24,33 @@ public class UserController {
     private  IUserService userService;
 
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
     public ResponseEntity<?> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAll());
 
     }
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/inactive")
     public ResponseEntity<?> getAllInactive(){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getAllInactive());
 
     }
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cuit/{cuit}")
     public ResponseEntity<?> getByCuit(@PathVariable String cuit){
 
             return ResponseEntity.status(HttpStatus.OK).body(userService.getByCuit(cuit));
 
     }
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/businessName/{name}")
     public ResponseEntity<?> getByBusinessName(@PathVariable String name){
         return ResponseEntity.status(HttpStatus.OK).body(userService.getByBusinessName(name));
     }
 
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("")
     public ResponseEntity<?> insert(@RequestBody @Valid UserDtoRequest userDtoRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.insert(userDtoRequest));
@@ -69,9 +69,15 @@ public class UserController {
  */
 
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/disable/{cuit}")
+    public  ResponseEntity<?> disableByCuit(@PathVariable String cuit){
+        return ResponseEntity.status(HttpStatus.OK).body(userService.disableByCuit(cuit));
+    }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{cuit}")
-    public  ResponseEntity<?> deleteByCuit(@PathVariable String cuit){
+    public ResponseEntity<?> deleteByCuit( @PathVariable String cuit) throws Exception {
+        System.out.println("entro al controller");
         return ResponseEntity.status(HttpStatus.OK).body(userService.deleteByCuit(cuit));
     }
 

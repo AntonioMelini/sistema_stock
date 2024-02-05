@@ -25,6 +25,9 @@ public interface IUserRepository extends CrudRepository<User,String>  {
 
     Optional<User> findUserByCuit (String cuit);
 
+    @Override
+    void deleteById(String cuit);
+
     @Query("select p from User p where p.gross_income= ?1")
     Optional<User> findUserByGrossIncome(String gross_income);
 
