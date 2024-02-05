@@ -1,20 +1,13 @@
 package com.antonio.sistema_stock.controllers;
 
-import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
 import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
-import com.antonio.sistema_stock.entities.Product;
-import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.services.IUserService;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 
 
 @RestController
