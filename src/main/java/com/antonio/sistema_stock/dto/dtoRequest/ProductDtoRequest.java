@@ -13,6 +13,19 @@ public class ProductDtoRequest {
     private Long stock;
     private String image;
     private String description;
+    private Boolean enable;
+
+    public ProductDtoRequest() {
+    }
+
+    public ProductDtoRequest(String name, Double price, Long stock, String image, String description, Boolean enable) {
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.image = image;
+        this.description = description;
+        this.enable = enable;
+    }
 
     public String getName() {
         return name;
@@ -50,7 +63,16 @@ public class ProductDtoRequest {
         return description;
     }
 
+
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
     }
 }

@@ -17,6 +17,7 @@ public interface IUserService {
     UserDtoResponse getByCuit(String cuit)  ;
 
     UserDtoResponse getByBusinessName(String name);
+    String disableByCuit(String cuit);
     String deleteByCuit(String cuit);
 
 

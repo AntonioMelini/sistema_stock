@@ -24,12 +24,26 @@ public class Product {
     @Column(nullable = false)
     @NotNull(message = "insert a correct product description")
     private String description;
+    @Column(columnDefinition = "boolean default true")
+    private Boolean enable;
 
     @ManyToOne
     private User user;
 
     @Embedded
     private final Audit audit=new Audit();
+
+    public Product() {
+    }
+
+    public Product(Long id, String name, Double price, Long stock, String image, String description) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.image = image;
+        this.description = description;
+    }
 
     public Long getId() {
         return id;
@@ -77,6 +91,14 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable ? enable :false;
     }
 
     public User getUser() {
