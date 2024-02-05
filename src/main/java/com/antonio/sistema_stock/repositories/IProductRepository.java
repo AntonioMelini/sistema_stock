@@ -3,6 +3,7 @@ package com.antonio.sistema_stock.repositories;
 import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
 import com.antonio.sistema_stock.entities.Product;
 import com.antonio.sistema_stock.entities.User;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 @Repository
-
 public interface IProductRepository  extends CrudRepository<Product, Long> {
 
 
@@ -22,7 +22,9 @@ public interface IProductRepository  extends CrudRepository<Product, Long> {
     @Query("Select new com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest(p.name, p.price, p.stock, p.image, p.description ,p.enable) from Product p where p.id=?1")
     ProductDtoRequest findById(String id);
 
-
+    @Modifying
+    @Query("Delete from Product  p where p.user=?1")
+    void deleteAllProductsById(User user);
 
 
     void deleteById(Long id);

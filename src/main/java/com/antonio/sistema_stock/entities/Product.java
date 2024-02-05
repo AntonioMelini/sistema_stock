@@ -98,7 +98,8 @@ public class Product {
     }
 
     public void setEnable(Boolean enable) {
-        this.enable = enable ? enable :false;
+        if (enable ==null || enable) this.enable=true;
+        else this.enable=false;
     }
 
     public User getUser() {

@@ -6,6 +6,7 @@ import com.antonio.sistema_stock.dto.dtoRequest.UserDtoRequest;
 import com.antonio.sistema_stock.dto.dtoResponse.UserDtoResponse;
 import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
+import com.antonio.sistema_stock.repositories.IProductRepository;
 import com.antonio.sistema_stock.repositories.IUserRepository;
 import com.antonio.sistema_stock.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.util.Optional;
 public class UserServiceImpl implements IUserService {
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private IProductRepository productRepository;
 
     ////////////////////////
     @Transactional(readOnly = true)
@@ -84,6 +87,7 @@ public class UserServiceImpl implements IUserService {
         System.out.println("entro a delete service");
         Optional<User> userOptional = userRepository.findUserByCuit(cuit);
         if (userOptional.isPresent()) {
+            productRepository.deleteAllProductsById(userOptional.get());
             userRepository.deleteById(cuit);
             return "Se elimino correctamente";
         }
