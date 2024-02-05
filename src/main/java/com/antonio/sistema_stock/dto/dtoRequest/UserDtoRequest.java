@@ -9,7 +9,7 @@ public class UserDtoRequest {
     private  String business_direction;
     private String business_name;
     private  String gross_income;
-    private String role;
+    private Boolean admin;
     private Boolean active;
 
     public Boolean getActive() {
@@ -27,17 +27,20 @@ public class UserDtoRequest {
         System.out.println("esto es el setActive despues "+this.active);
     }
 
-    public String getRole() {
-        return role;
+    public Boolean getAdmin() {
+        System.out.println("esto es el getAdmin"+admin);
+        return admin;
 
     }
 
-    public void setRole(String role) {
-        if(role==null || role=="USER"){
-            this.role= "USER";
+    public void setAdmin(Boolean admin) {
+        System.out.println("esto es el setAdmin"+admin);
+        if(admin==null || admin==false){
+            this.admin= false;
         }else{
-            this.role="ADMIN";
+            this.admin=true;
         }
+        System.out.println("esto es el setAdmin despues "+this.admin);
     }
 
     public UserDtoRequest() {
@@ -119,7 +122,7 @@ public class UserDtoRequest {
                 ", business_direction='" + business_direction + '\'' +
                 ", business_name='" + business_name + '\'' +
                 ", gross_income='" + gross_income + '\'' +
-                ", role=" + role +
+                ", admin=" + admin +
                 '}';
     }
 }
