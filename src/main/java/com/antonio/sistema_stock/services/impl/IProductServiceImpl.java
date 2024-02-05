@@ -26,7 +26,7 @@ public class IProductServiceImpl implements IProductService {
 
     @Transactional
     @Override
-    public String insert(ProductDtoRequest product,String username) throws Exception {
+    public String insert(ProductDtoRequest product, String username) throws Exception {
         Product product1 =  productRepository.save(mapProductDtoToProduct(product,username));
         if (Objects.isNull(product1)) throw new Exception("error al agregar el producto");
         return "se agrego perfectamente";
@@ -47,8 +47,9 @@ public class IProductServiceImpl implements IProductService {
 
 
     @Modifying
+    @Transactional()
     @Override
-    public String updateById(Long id,ProductDtoRequest productDtoRequest) throws Exception {
+    public String updateById(Long id, ProductDtoRequest productDtoRequest) throws Exception {
        Optional<Product> productOptional = productRepository.findById(id);
        if (productOptional.isEmpty())throw new Exception("no se encontro el producto");
        Product product=productOptional.get();
@@ -74,7 +75,7 @@ public class IProductServiceImpl implements IProductService {
 
 
 
-    private Product mapProductDtoToProduct(ProductDtoRequest productDtoRequest,String username){
+    private Product mapProductDtoToProduct(ProductDtoRequest productDtoRequest, String username){
         Optional<User> user= userRepository.findByUsername(username);
         if (user.isEmpty()) throw new UserNotFound("User not Found");
         Product product= new Product();

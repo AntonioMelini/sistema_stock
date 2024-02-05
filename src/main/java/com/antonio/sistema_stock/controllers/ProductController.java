@@ -2,17 +2,11 @@ package com.antonio.sistema_stock.controllers;
 
 import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
 import com.antonio.sistema_stock.services.IProductService;
-import jakarta.persistence.GeneratedValue;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.header.Header;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,7 +18,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/product/{username}")
-    public ResponseEntity<?> insert(@Valid @RequestBody ProductDtoRequest product,@PathVariable String username) throws Exception {
+    public ResponseEntity<?> insert(@Valid @RequestBody ProductDtoRequest product, @PathVariable String username) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.insert(product,username));
     }
     @PreAuthorize("hasRole('USER')")

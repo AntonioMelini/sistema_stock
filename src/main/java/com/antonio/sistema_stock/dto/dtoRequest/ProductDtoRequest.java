@@ -1,9 +1,5 @@
 package com.antonio.sistema_stock.dto.dtoRequest;
 
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public class ProductDtoRequest {
 
     private String name;
