@@ -48,12 +48,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // el request viene como JSON y lo tenemos que convertir en Objeto
 
             user = new ObjectMapper().readValue(request.getInputStream(), User.class); // toma la password y user del request
-            username= user.getUsername();
-            password= user.getPassword();
-        } catch (StreamReadException e) {
-            throw new RuntimeException(e);
-        } catch (DatabindException e) {
-            throw new RuntimeException(e);
+            username = user.getUsername();
+            password = user.getPassword();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -77,14 +73,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authResult.getPrincipal(); // detalles del user
 
-        String token = jwtUtils.generateAccesToken(user.getUsername()); //genera un token por haberse autenticado con exito
+        String acces_token = jwtUtils.generateAccesToken(user.getUsername(),authResult); //genera un token por haberse autenticado con exito
+        String refresh_token = jwtUtils.generateRefreshToken(user.getUsername());
 
-
-        response.addHeader("Authorization",token);
+        response.addHeader("Authorization",acces_token);
+        response.addHeader("refresh_token",refresh_token);
         Map<String, String>body =new HashMap<>();
         body.put("username",user.getUsername());
         body.put("message", String.format("Hola %s has iniciado sesion con exito! ", user.getUsername()));
-        body.put("token",token);
+        body.put("access_token",acces_token);
+        body.put("refresh_token",refresh_token);
+        body.put("roles",user.getAuthorities().toString().replace("[","").replace("]",""));
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body)); //escribimos el Map como un Json en la respuesta
         response.setStatus(HttpStatus.OK.value());

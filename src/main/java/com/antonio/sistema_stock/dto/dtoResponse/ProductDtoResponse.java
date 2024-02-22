@@ -1,11 +1,10 @@
-package com.antonio.sistema_stock.dto.dtoRequest;
+package com.antonio.sistema_stock.dto.dtoResponse;
 
-import org.apache.logging.log4j.util.Strings;
+public class ProductDtoResponse {
 
-public class ProductDtoRequest {
+    private  Long id;
 
     private String name;
-
     private Double price ;
 
     private Long stock;
@@ -13,24 +12,25 @@ public class ProductDtoRequest {
     private String description;
     private Boolean enable;
 
-    public ProductDtoRequest() {
-    }
-    public ProductDtoRequest(String name, Double price, Long stock, String image, String description) {
-        this.name = name;
-        this.price = price;
-        this.stock = stock;
-        this.image = !Strings.isEmpty(image) ? image : "";
-        this.description = description;
-        this.enable = true;
+    public ProductDtoResponse() {
     }
 
-    public ProductDtoRequest(String name, Double price, Long stock, String image, String description, Boolean enable) {
+    public ProductDtoResponse(Long id,String name, Double price, Long stock, String image, String description, Boolean enable) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
-        this.image = !Strings.isEmpty(image) ? image : "";
+        this.image = image;
         this.description = description;
         this.enable = enable;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -81,4 +81,7 @@ public class ProductDtoRequest {
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
+
+
+
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ClientController {
 
 
@@ -33,12 +34,12 @@ public class ClientController {
         @PreAuthorize("hasRole('USER')")
         @GetMapping("/client/{id}")
         public ResponseEntity<?> getById( @PathVariable Long id) throws Exception {
-            return ResponseEntity.status(HttpStatus.CREATED).body(clientService.getById(id));
+            return ResponseEntity.status(HttpStatus.OK).body(clientService.getById(id));
         }
         @PreAuthorize("hasRole('USER')")
         @PutMapping("/client/{id}")
         public ResponseEntity<?> updateById( @PathVariable Long id, @RequestBody ClientDtoRequest client) throws Exception {
-            return ResponseEntity.status(HttpStatus.CREATED).body(clientService.updateById(id,client));
+            return ResponseEntity.status(HttpStatus.OK).body(clientService.updateById(id,client));
         }
 
         @PreAuthorize("hasRole('USER')")

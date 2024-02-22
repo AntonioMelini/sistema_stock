@@ -29,6 +29,44 @@ import java.io.IOException;
 //una vez por peticion se va a validar el token
 @Component
 public class JwtValidationFilter extends BasicAuthenticationFilter {
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        try {
+            System.out.println("ya entro a validacion");
+            //1) extraer el token
+
+            String tokenHeader = request.getHeader("Authorization");
+
+            //validamos el header
+            if (tokenHeader != null || tokenHeader.startsWith("Bearer ")){
+
+                String token = tokenHeader.replace("Bearer ","");
+                if(jwtUtils.isTokenValid(token)){
+                    String username = jwtUtils.getUsernameFromToken(token); // obtenemos user del token
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username); //obtiene el user de la base de datos con sus datos y sus roles
+
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,null,userDetails.getAuthorities()); // autenticar al useruario
+
+                    // contiene la autenticacion propia de la app
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+            }
+            filterChain.doFilter(request, response);
+
+
+
+        } catch (Exception e) {
+            try {
+                throw new Exception("token expiro");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
 
      private JwtUtils jwtUtils; //para validar token
 
@@ -39,33 +77,6 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
         super(authenticationManager);
         this.jwtUtils=jwtUtils;
         this.userDetailsService=userDetailsService;
-    }
-
-    @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
-
-        System.out.println("ya entro a validacion");
-        //1) extraer el token
-
-        String tokenHeader = request.getHeader("Authorization");
-
-        //validamos el header
-        if (tokenHeader != null || tokenHeader.startsWith("Bearer ")){
-            String token = tokenHeader.replace("Bearer ","");
-          if(jwtUtils.isTokenValid(token)){
-              String username = jwtUtils.getUsernameFromToken(token); // obtenemos user del token
-              UserDetails userDetails = userDetailsService.loadUserByUsername(username); //obtiene el user de la base de datos con sus datos y sus roles
-
-              UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,null,userDetails.getAuthorities()); // autenticar al useruario
-
-              // contiene la autenticacion propia de la app
-              SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-          }
-        }
-        filterChain.doFilter(request, response);
-
     }
 
 

@@ -1,6 +1,7 @@
 package com.antonio.sistema_stock.services.impl;
 
 import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
+import com.antonio.sistema_stock.dto.dtoResponse.ProductDtoResponse;
 import com.antonio.sistema_stock.entities.Product;
 import com.antonio.sistema_stock.entities.User;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
@@ -33,7 +34,7 @@ public class IProductServiceImpl implements IProductService {
     }
     @Transactional(readOnly = true)
     @Override
-    public List<ProductDtoRequest> getAll(String username) throws Exception {
+    public List<ProductDtoResponse> getAll(String username) throws Exception {
         Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty()) throw new Exception("usuario no registrado");
         return productRepository.findAll(user.get());
@@ -71,6 +72,29 @@ public class IProductServiceImpl implements IProductService {
         if (product.isEmpty()) return "se elimino perfectamente";
         throw new Exception("no se elimino");
     }
+
+    @Override
+    public String subtractStockById(Long id, Long stock) throws Exception {
+       Product product =  productRepository.findById(id).orElseThrow(Exception::new);
+
+       if (product.getStock() - stock < 0) throw new Exception("ACA HACER EXCEPCION DE : Stock invalid :");
+       product.setStock(product.getStock()-stock);
+       productRepository.save(product);
+       return "se modifico perfectamente el stock";
+    }
+
+
+
+
+    public String addStockById(Long id, Long stock) throws Exception {
+        Product product =  productRepository.findById(id).orElseThrow(Exception::new);
+        product.setStock(product.getStock()+stock);
+        productRepository.save(product);
+        return "se agrego perfectamente stock";
+    }
+
+
+
 
 
 
