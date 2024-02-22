@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
     @Autowired
     private IProductService productService;
@@ -30,18 +31,28 @@ public class ProductController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/product/{id}")
     public ResponseEntity<?> getById( @PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.getById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getById(id));
     }
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/product/{id}")
     public ResponseEntity<?> updateById( @PathVariable Long id, @RequestBody ProductDtoRequest productDtoRequest) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.updateById(id,productDtoRequest));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.updateById(id,productDtoRequest));
+    }
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/product/addStock/{id}/{stock}")
+    public ResponseEntity<?> addStockById( @PathVariable Long id, @PathVariable Long stock) throws Exception {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addStockById(id,stock));
+    }
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/product/subtractStock/{id}/{stock}")
+    public ResponseEntity<?> subtractStockById( @PathVariable Long id, @PathVariable Long stock) throws Exception {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.subtractStockById(id,stock));
     }
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/product/{id}")
     public ResponseEntity<?> deleteById( @PathVariable Long id) throws Exception {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.deleteById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(productService.deleteById(id));
     }
 
 

@@ -6,8 +6,10 @@ import com.antonio.sistema_stock.security.jwt.JwtUtils;
 import com.antonio.sistema_stock.security.jwt.JwtValidationFilter;
 import com.antonio.sistema_stock.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -18,6 +20,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -51,6 +59,7 @@ public class SpringSecurityConfig {
                     .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // La sesion HTTP, donde se guarda la sesion del usuario, es por defecto con ESTADO, al hacerlo STATELESS por cada peticion hay que mandar el JWT.
                     .addFilter(jwtAuthenticationFilter) //se valida el token
                     .addFilter(jwtValidationFilter) // primero el nuestro despues el de spring security
+                    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .build();
 
         } catch (Exception e) {
@@ -74,15 +83,27 @@ public class SpringSecurityConfig {
     }
 
 
-    /*
-    @Bean
-    protected AuthenticationManager configure (AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-         authenticationManagerBuilder.userDetailsService(userDetailsService).configure(authenticationManagerBuilder);
-         return authenticationManagerBuilder.build();
+   @Bean
+    CorsConfigurationSource corsConfigurationSource (){
+       CorsConfiguration corsConfiguration= new CorsConfiguration();
+        corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Authorization","Content-Type"));
+        corsConfiguration.setAllowedMethods(Arrays.asList("GET","POST","DELETE","PUT"));
+        corsConfiguration.setAllowCredentials(true);
 
-    }
+       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+       source.registerCorsConfiguration("/**", corsConfiguration);
+       return source;
+   }
 
-     */
+   @Bean
+    FilterRegistrationBean<CorsFilter> corseFilter() {
+        FilterRegistrationBean<CorsFilter> corsBean = new FilterRegistrationBean<>(
+                new CorsFilter(corsConfigurationSource())
+        );
+        corsBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return corsBean;
+   }
 
 }
 
