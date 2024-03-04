@@ -4,6 +4,9 @@ import com.antonio.sistema_stock.dto.dtoRequest.ProductDtoRequest;
 import com.antonio.sistema_stock.dto.dtoResponse.ProductDtoResponse;
 import com.antonio.sistema_stock.entities.Product;
 import com.antonio.sistema_stock.entities.User;
+import com.antonio.sistema_stock.exceptions.product.ProductNotEliminated;
+import com.antonio.sistema_stock.exceptions.product.ProductNotFound;
+import com.antonio.sistema_stock.exceptions.product.StockInvalid;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import com.antonio.sistema_stock.repositories.IProductRepository;
 import com.antonio.sistema_stock.repositories.IUserRepository;
@@ -66,18 +69,18 @@ public class IProductServiceImpl implements IProductService {
 
     @Transactional
     @Override
-    public String deleteById(Long id) throws Exception {
+    public String deleteById(Long id)  {
         productRepository.deleteById(id);
        Optional<Product> product= productRepository.findById(id);
         if (product.isEmpty()) return "se elimino perfectamente";
-        throw new Exception("no se elimino");
+        throw new ProductNotEliminated("no se elimino");
     }
 
     @Override
-    public String subtractStockById(Long id, Long stock) throws Exception {
-       Product product =  productRepository.findById(id).orElseThrow(Exception::new);
+    public String subtractStockById(Long id, Long stock)  {
+        Product product =  productRepository.findById(id).orElseThrow(()->new ProductNotFound("Product Not Found"));
 
-       if (product.getStock() - stock < 0) throw new Exception("ACA HACER EXCEPCION DE : Stock invalid :");
+       if (product.getStock() - stock < 0) throw new StockInvalid("invalid Stock amount");
        product.setStock(product.getStock()-stock);
        productRepository.save(product);
        return "se modifico perfectamente el stock";
@@ -86,8 +89,8 @@ public class IProductServiceImpl implements IProductService {
 
 
 
-    public String addStockById(Long id, Long stock) throws Exception {
-        Product product =  productRepository.findById(id).orElseThrow(Exception::new);
+    public String addStockById(Long id, Long stock) {
+        Product product =  productRepository.findById(id).orElseThrow(()->new ProductNotFound("Product Not Found"));
         product.setStock(product.getStock()+stock);
         productRepository.save(product);
         return "se agrego perfectamente stock";
