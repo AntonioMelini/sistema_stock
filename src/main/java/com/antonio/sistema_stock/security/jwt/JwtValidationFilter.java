@@ -1,6 +1,7 @@
 package com.antonio.sistema_stock.security.jwt;
 
 
+import com.antonio.sistema_stock.exceptions.auth.InvalidToken;
 import com.antonio.sistema_stock.security.services.UserDetailsServiceImpl;
 
 
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -52,18 +54,22 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
                     // contiene la autenticacion propia de la app
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }else{
+                    throw new InvalidToken("token not valid");
                 }
+            }else{
+                throw new InvalidToken("token not valid");
             }
             filterChain.doFilter(request, response);
 
 
 
+        } catch (InvalidToken e) {
+            throw new InvalidToken(e.getMessage());
+        } catch (UsernameNotFoundException e){
+            throw new UsernameNotFoundException(e.getMessage());
         } catch (Exception e) {
-            try {
-                throw new Exception("token expiro");
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 

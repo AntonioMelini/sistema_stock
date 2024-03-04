@@ -1,5 +1,6 @@
 package com.antonio.sistema_stock.security.jwt;
 
+import com.antonio.sistema_stock.exceptions.auth.InvalidToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -81,7 +82,7 @@ public class JwtUtils { //
                 Jwts.parser().verifyWith(SECRET_KEY).build().parseSignedClaims(token).getPayload();
                 return true;
             }catch (Exception e){
-                throw new Exception("se rompio en el istokenvalid");
+                throw new InvalidToken("Token not valid");
             }
 
     }

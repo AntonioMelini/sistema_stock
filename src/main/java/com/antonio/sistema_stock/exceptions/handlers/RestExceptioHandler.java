@@ -1,6 +1,9 @@
 package com.antonio.sistema_stock.exceptions.handlers;
 
 import com.antonio.sistema_stock.exceptions.api.ApiError;
+import com.antonio.sistema_stock.exceptions.product.ProductNotEliminated;
+import com.antonio.sistema_stock.exceptions.product.ProductNotFound;
+import com.antonio.sistema_stock.exceptions.product.StockInvalid;
 import com.antonio.sistema_stock.exceptions.user.UserCreateValidation;
 import com.antonio.sistema_stock.exceptions.user.UserNotFound;
 import jakarta.validation.ConstraintViolationException;
@@ -49,6 +52,22 @@ public class RestExceptioHandler {
     }
     @ExceptionHandler(value = {UsernameNotFoundException.class})
     public ResponseEntity<ApiError> handleUsernameNotFoundException (UsernameNotFoundException e){
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {StockInvalid.class})
+    public ResponseEntity<ApiError> handleStockInvalidException (StockInvalid e){
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = {ProductNotFound.class})
+    public ResponseEntity<ApiError> handleProductNotFoundException (ProductNotFound e){
+        ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(value = {ProductNotEliminated.class})
+    public ResponseEntity<ApiError> handleProductNotEliminatedException (ProductNotEliminated e){
         ApiError error = new ApiError(400,e.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
